@@ -4,7 +4,7 @@ import sys
 #======================================= FILE PREPARATION ==============================================
 
 
-def removeWater():
+def removeNonProtein():
     structure = sys.argv[1]
 
     print("Welcome to AutoSolPro")
@@ -14,10 +14,10 @@ def removeWater():
     print("Khattiya.Pongsirijinda@skoltech.ru")
     print("============================")
     
-    nonProtein = ['HOH']
+    nonProtein = ['ANISOU','HETATM']
     with open(structure) as oldfile, open('clean.pdb', 'w') as newfile:
         for line in oldfile:
-            if not any(molec in line for molec in nonProtein):
+            if not any(s in line for s in nonProtein):
                 newfile.write(line)
     
 def forceField():
@@ -75,7 +75,7 @@ def mdpMDLauncher():
 
 
 def mdRun():
-    removeWater()
+    removeNonProtein()
     forceField()
     solv()
     addIons()
