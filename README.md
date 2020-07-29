@@ -19,7 +19,7 @@ python3 AutoSolPro.py yourfile.pdb
 ```
 You will be asked about the number of steps of the MD. Then, all the processes will be run fully automatically.
 
-## Authors
+## Author
 **[Khattiya Pongsirijinda](mailto:Khattiya.Pongsirijinda@skoltech.ru)** - Skolkovo Institute of Science and Technology
 
 ## References
