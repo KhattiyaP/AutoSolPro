@@ -2,13 +2,12 @@
 ### Automated molecular dynamics protocols for soluble proteins
 ## Getting Started
 ### Prerequisites
-* [GROMACS](http://www.gromacs.org/) needs be installed.
+* [GROMACS](http://www.gromacs.org/) needs to be installed.
 * If you use Windows, you may run by Ubuntu in Windows Subsystem for Linux.
 ### How to Use
 1. Create a directory (no space) and put there all the files:
     * AutoSolPro.py
     * ions.mdp
-    * md.mdp
     * minim.mdp
     * npt.mdp
     * nvt.mdp
@@ -18,6 +17,7 @@
 ```
 python3 AutoSolPro.py yourfile.pdb
 ```
+You will be asked about the number of steps of the MD. Then, all the processes will be run fully automatically.
 
 ## Authors
 **[Khattiya Pongsirijinda](mailto:Khattiya.Pongsirijinda@skoltech.ru)** - Skolkovo Institute of Science and Technology
