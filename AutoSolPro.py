@@ -3,78 +3,417 @@ import sys
         
 #======================================= FILE PREPARATION ==============================================
 
-
-class mdpFile(object):
-    
-    def __init__(self):
-        self.paramList = []
-        
+class ionsMDP:
     def __call__(self):
-        self.paramList.append('title                   = Molecular dynamics (MD)')
-        self.paramList.append('; Run parameters')
-        self.paramList.append('integrator              = md        ; leap-frog integrator')
-        
-    def numberOfSteps(self): 
-        print('Default number of steps is 500000 (1 ns). Would you like to change? y/n: ')
-        default = input()
-        if str(default) == str('y'):
-            print('Specify the desired number of steps: ')
-            new = input()
-            new = int(new)
-            nsteps = 'nsteps                  = %d' %(new)
-            self.paramList.append(nsteps)   
-            return
-        if str(default) == str('n'):
-            self.paramList.append('nsteps                  = 500000')
-            return
-        else:   
-            print('Please choose y or n.')
-            self.numberOfSteps()
-            
+        self.paramList = []
+        self.paramAllName = ['integrator','emtol','emsteps','nsteps','nstlist','cutoffscheme','ns_type','coulombtype','rcoulomb','rvdw','pbc']
+        self.integrator = 'integrator = steep'
+        self.emtol = 'emtol = 1000.0'
+        self.emsteps = 'emstep = 0.01'
+        self.nsteps = 'nsteps = 50000'
+        self.nstlist = 'nstlist = 1'
+        self.cutoffscheme = 'cutoff-scheme = Verlet'
+        self.ns_type = 'ns_type = grid'
+        self.coulombtype = 'coulombtype = cutoff'
+        self.rcoulomb = 'rcoulomb = 1.0'
+        self.rvdw = 'rvdw = 1.0'
+        self.pbc = 'pbc = xyz'
+
     def param(self):
-        self.paramList.append('dt                      = 0.002     ; 2 fs')
-        self.paramList.append('; Output control')
-        self.paramList.append('nstxout                 = 0         ; suppress bulky .trr file by specifying') 
-        self.paramList.append('nstvout                 = 0         ; 0 for output frequency of nstxout,')
-        self.paramList.append('nstfout                 = 0         ; nstvout, and nstfout')
-        self.paramList.append('nstenergy               = 5000      ; save energies every 10.0 ps')
-        self.paramList.append('nstlog                  = 5000      ; update log file every 10.0 ps')
-        self.paramList.append('nstxout-compressed      = 5000      ; save compressed coordinates every 10.0 ps')
-        self.paramList.append('compressed-x-grps       = System    ; save the whole system')
-        self.paramList.append('; Bond parameters')
-        self.paramList.append('continuation            = yes       ; Restarting after NPT') 
-        self.paramList.append('constraint_algorithm    = lincs     ; holonomic constraints') 
-        self.paramList.append('constraints             = h-bonds   ; bonds involving H are constrained')
-        self.paramList.append('lincs_iter              = 1         ; accuracy of LINCS')
-        self.paramList.append('lincs_order             = 4         ; also related to accuracy')
-        self.paramList.append('; Neighborsearching')
-        self.paramList.append('cutoff-scheme           = Verlet    ; Buffered neighbor searching')
-        self.paramList.append('ns_type                 = grid      ; search neighboring grid cells')
-        self.paramList.append('nstlist                 = 10        ; 20 fs, largely irrelevant with Verlet scheme')
-        self.paramList.append('rcoulomb                = 1.0       ; short-range electrostatic cutoff (in nm)')
-        self.paramList.append('rvdw                    = 1.0       ; short-range van der Waals cutoff (in nm)')
-        self.paramList.append('; Electrostatics')
-        self.paramList.append('coulombtype             = PME       ; Particle Mesh Ewald for long-range electrostatics')
-        self.paramList.append('pme_order               = 4         ; cubic interpolation')
-        self.paramList.append('fourierspacing          = 0.16      ; grid spacing for FFT')
-        self.paramList.append('; Temperature coupling is on')
-        self.paramList.append('tcoupl                  = V-rescale             ; modified Berendsen thermostat')
-        self.paramList.append('tc-grps                 = Protein Non-Protein   ; two coupling groups - more accurate')
-        self.paramList.append('tau_t                   = 0.1     0.1           ; time constant, in ps')
-        self.paramList.append('ref_t                   = 300     300           ; reference temperature, one for each group, in K')
-        self.paramList.append('; Pressure coupling is on')
-        self.paramList.append('pcoupl                  = Parrinello-Rahman     ; Pressure coupling on in NPT')
-        self.paramList.append('pcoupltype              = isotropic             ; uniform scaling of box vectors')
-        self.paramList.append('tau_p                   = 2.0                   ; time constant, in ps')
-        self.paramList.append('ref_p                   = 1.0                   ; reference pressure, in bar')
-        self.paramList.append('compressibility         = 4.5e-5                ; isothermal compressibility of water, bar^-1')
-        self.paramList.append('; Periodic boundary conditions')
-        self.paramList.append('pbc                     = xyz       ; 3-D PBC')
-        self.paramList.append('; Dispersion correction')
-        self.paramList.append('DispCorr                = EnerPres  ; account for cut-off vdW scheme')
-        self.paramList.append('; Velocity generation')
-        self.paramList.append('gen_vel                 = no        ; Velocity generation is off')
+        print('Here are parameters of adding ions step:')
+        for name in self.paramAllName:
+            print(eval('self.'+str(name)))
+        print('\n')
+        print('Please specify the parameter that you would like to change or type n if you do not want to: ')
+        paramName = input()
+        if str(paramName) == str('n'):
+            print('\n')
+        elif str(paramName) in self.paramAllName:
+            print('Specify the new value of this parameter: ')
+            new = input()
+            setattr(self,str(paramName),str(paramName) + ' = ' + str(new))
+            print('\n')
+            self.param()
+        elif str(paramName) == str('cutoff-scheme'):
+            print('Specify the new value of this parameter: ')
+            new = input()
+            self.cutoffscheme = 'cutoff-scheme = %s' %(new)
+            print('\n')
+            self.param()
+        else:
+            print('This parameter does not exist!')
+            print('\n')
+            self.param()
+    
+    def paramAppend(self):    
+        for name in self.paramAllName:
+          self.paramList.append(eval('self.'+str(name)))
+          
+        return
         
+    def toFile(self):
+        sys.stdout = open('ions.mdp', 'w')
+        for i in range(len(self.paramList)):
+            print(self.paramList[i])            
+        sys.stdout.flush()
+        sys.stdout.close()
+        sys.stdout = sys.__stdout__
+
+            
+def IONSMDP():
+    mdp = ionsMDP()
+    mdp()
+    mdp.param()
+    mdp.paramAppend()
+    mdp.toFile()    
+
+class minimMDP:
+    def __call__(self):
+        self.paramList = []
+        self.paramAllName = ['integrator','emtol','emsteps','nsteps','nstlist','cutoffscheme','ns_type','coulombtype','rcoulomb','rvdw','pbc']
+        self.integrator = 'integrator = steep'
+        self.emtol = 'emtol = 1000.0'
+        self.emsteps = 'emstep = 0.01'
+        self.nsteps = 'nsteps = 50000'
+        self.nstlist = 'nstlist = 1'
+        self.cutoffscheme = 'cutoff-scheme = Verlet'
+        self.ns_type = 'ns_type = grid'
+        self.coulombtype = 'coulombtype = PME'
+        self.rcoulomb = 'rcoulomb = 1.0'
+        self.rvdw = 'rvdw = 1.0'
+        self.pbc = 'pbc = xyz'
+
+    def param(self):
+        print('Here are parameters of energy minimization step:')
+        for name in self.paramAllName:
+            print(eval('self.'+str(name)))
+        print('\n')
+        print('Please specify the parameter that you would like to change or type n if you do not want to: ')
+        paramName = input()
+        if str(paramName) == str('n'):
+            print('\n')
+        elif str(paramName) in self.paramAllName:
+            print('Specify the new value of this parameter: ')
+            new = input()
+            setattr(self,str(paramName),str(paramName) + ' = ' + str(new))
+            print('\n')
+            self.param()
+        elif str(paramName) == str('cutoff-scheme'):
+            print('Specify the new value of this parameter: ')
+            new = input()
+            self.cutoffscheme = 'cutoff-scheme = %s' %(new)
+            print('\n')
+            self.param()
+        else:
+            print('This parameter does not exist!')
+            print('\n')
+            self.param()
+    
+    def paramAppend(self):                
+        for name in self.paramAllName:
+          self.paramList.append(eval('self.'+str(name)))
+          
+        return
+        
+    def toFile(self):
+        sys.stdout = open('minim.mdp', 'w')
+        for i in range(len(self.paramList)):
+            print(self.paramList[i])            
+        sys.stdout.flush()
+        sys.stdout.close()
+        sys.stdout = sys.__stdout__
+
+            
+def MINIMMDP():
+    mdp = minimMDP()
+    mdp()
+    mdp.param()
+    mdp.paramAppend()
+    mdp.toFile()
+
+class nvtMDP:
+    def __call__(self):
+        self.paramList = []
+        self.paramAllName = ['title','define','integrator','nsteps','dt','nstxout','nstvout','nstenergy','nstlog', \
+                         'continuation','constraint_algorithm','constraints','lincs_iter','lincs_order','cutoffscheme','ns_type','nstlist','rcoulomb', \
+                         'rvdw','DispCorr','coulombtype','pme_order','fourierspacing','tcoupl','tcgrps','tau_t','ref_t','pcoupl', \
+                         'pbc','gen_vel','gen_temp','gen_seed']
+        self.title = 'title = NVT equilibration'
+        self.define = 'define = -DPOSRES'
+        self.integrator = 'integrator = md'
+        self.nsteps = 'nsteps = 50000'
+        self.dt = 'dt = 0.002'
+        self.nstxout = 'nstxout = 500' 
+        self.nstvout = 'nstvout = 500'
+        self.nstenergy = 'nstenergy = 500'
+        self.nstlog = 'nstlog = 500'
+        self.continuation = 'continuation = no' 
+        self.constraint_algorithm = 'constraint_algorithm = lincs' 
+        self.constraints = 'constraints = h-bonds'
+        self.lincs_iter = 'lincs_iter = 1'
+        self.lincs_order = 'lincs_order = 4'
+        self.cutoffscheme = 'cutoff-scheme = Verlet'
+        self.ns_type = 'ns_type = grid'
+        self.nstlist = 'nstlist = 10'
+        self.rcoulomb = 'rcoulomb = 1.0'
+        self.rvdw = 'rvdw = 1.0'
+        self.DispCorr = 'DispCorr = EnerPres'
+        self.coulombtype = 'coulombtype = PME'
+        self.pme_order = 'pme_order = 4'
+        self.fourierspacing = 'fourierspacing = 0.16'
+        self.tcoupl = 'tcoupl = V-rescale'
+        self.tcgrps = 'tc-grps = Protein Non-Protein'
+        self.tau_t = 'tau_t = 0.1     0.1'
+        self.ref_t = 'ref_t = 300     300'
+        self.pcoupl = 'pcoupl = no'
+        self.pbc = 'pbc = xyz'
+        self.gen_vel = 'gen_vel = yes'
+        self.gen_temp = 'gen_temp = 300'
+        self.gen_seed = 'gen_seed = -1'
+
+    def param(self):
+        print('Here are parameters of NVT equilibration step:')
+        for name in self.paramAllName:
+            print(eval('self.'+str(name)))
+        print('\n')
+        print('Please specify the parameter that you would like to change or type n if you do not want to: ')
+        paramName = input()
+        if str(paramName) == str('n'):
+            print('\n')
+        elif str(paramName) in self.paramAllName:
+            print('Specify the new value of this parameter: ')
+            new = input()
+            setattr(self,str(paramName),str(paramName) + ' = ' + str(new))
+            print('\n')
+            self.param()
+        elif str(paramName) == str('cutoff-scheme'):
+            print('Specify the new value of this parameter: ')
+            new = input()
+            self.cutoffscheme = 'cutoff-scheme = %s' %(new)
+            print('\n')
+            self.param()
+        elif str(paramName) == str('tc-grps'):
+            print('Specify the new value of this parameter: ')
+            new = input()
+            self.tcgrps = 'tc-grps = %s' %(new)
+            print('\n')
+            self.param()
+        else:
+            print('This parameter does not exist!')
+            print('\n')
+            self.param()
+    
+    def paramAppend(self):        
+        for name in self.paramAllName:
+          self.paramList.append(eval('self.'+str(name)))
+          
+        return
+        
+    def toFile(self):
+        sys.stdout = open('nvt.mdp', 'w')
+        for i in range(len(self.paramList)):
+            print(self.paramList[i])            
+        sys.stdout.flush()
+        sys.stdout.close()
+        sys.stdout = sys.__stdout__
+
+            
+def NVTMDP():
+    mdp = nvtMDP()
+    mdp()
+    mdp.param()
+    mdp.paramAppend()
+    mdp.toFile()
+
+class nptMDP:
+    def __call__(self):
+        self.paramList = []
+        self.paramAllName = ['title','define','integrator','nsteps','dt','nstxout','nstvout','nstenergy','nstlog', \
+                         'continuation','constraint_algorithm','constraints','lincs_iter','lincs_order','cutoffscheme','ns_type','nstlist','rcoulomb', \
+                         'rvdw','DispCorr','coulombtype','pme_order','fourierspacing','tcoupl','tcgrps','tau_t','ref_t','pcoupl','pcoupltype', \
+                         'tau_p','ref_p','compressibility','refcoord_scaling','pbc','gen_vel']
+        self.title = 'title = NPT equilibration'
+        self.define = 'define = -DPOSRES'
+        self.integrator = 'integrator = md'
+        self.nsteps = 'nsteps = 50000'
+        self.dt = 'dt = 0.002'
+        self.nstxout = 'nstxout = 500' 
+        self.nstvout = 'nstvout = 500'
+        self.nstenergy = 'nstenergy = 500'
+        self.nstlog = 'nstlog = 500'
+        self.continuation = 'continuation = yes' 
+        self.constraint_algorithm = 'constraint_algorithm = lincs' 
+        self.constraints = 'constraints = h-bonds'
+        self.lincs_iter = 'lincs_iter = 1'
+        self.lincs_order = 'lincs_order = 4'
+        self.cutoffscheme = 'cutoff-scheme = Verlet'
+        self.ns_type = 'ns_type = grid'
+        self.nstlist = 'nstlist = 10'
+        self.rcoulomb = 'rcoulomb = 1.0'
+        self.rvdw = 'rvdw = 1.0'
+        self.DispCorr = 'DispCorr = EnerPres'
+        self.coulombtype = 'coulombtype = PME'
+        self.pme_order = 'pme_order = 4'
+        self.fourierspacing = 'fourierspacing = 0.16'
+        self.tcoupl = 'tcoupl = V-rescale'
+        self.tcgrps = 'tc-grps = Protein Non-Protein'
+        self.tau_t = 'tau_t = 0.1     0.1'
+        self.ref_t = 'ref_t = 300     300'
+        self.pcoupl = 'pcoupl = Parrinello-Rahman'
+        self.pcoupltype = 'pcoupltype = isotropic'
+        self.tau_p = 'tau_p = 2.0'
+        self.ref_p = 'ref_p = 1.0'
+        self.compressibility = 'compressibility = 4.5e-5'
+        self.refcoord_scaling = 'refcoord_scaling = com'
+        self.pbc = 'pbc = xyz'
+        self.gen_vel = 'gen_vel = no'
+
+    def param(self):
+        print('Here are parameters of NPT equilibration step:')
+        for name in self.paramAllName:
+            print(eval('self.'+str(name)))
+        print('\n')
+        print('Please specify the parameter that you would like to change or type n if you do not want to: ')
+        paramName = input()
+        if str(paramName) == str('n'):
+            print('\n')
+        elif str(paramName) in self.paramAllName:
+            print('Specify the new value of this parameter: ')
+            new = input()
+            setattr(self,str(paramName),str(paramName) + ' = ' + str(new))
+            print('\n')
+            self.param()
+        elif str(paramName) == str('cutoff-scheme'):
+            print('Specify the new value of this parameter: ')
+            new = input()
+            self.cutoffscheme = 'cutoff-scheme = %s' %(new)
+            print('\n')
+            self.param()
+        elif str(paramName) == str('tc-grps'):
+            print('Specify the new value of this parameter: ')
+            new = input()
+            self.tcgrps = 'tc-grps = %s' %(new)
+            print('\n')
+            self.param()
+        else:
+            print('This parameter does not exist!')
+            print('\n')
+            self.param()
+    
+    def paramAppend(self):        
+        for name in self.paramAllName:
+          self.paramList.append(eval('self.'+str(name)))
+          
+        return
+        
+    def toFile(self):
+        sys.stdout = open('npt.mdp', 'w')
+        for i in range(len(self.paramList)):
+            print(self.paramList[i])            
+        sys.stdout.flush()
+        sys.stdout.close()
+        sys.stdout = sys.__stdout__
+
+            
+def NPTMDP():
+    mdp = nptMDP()
+    mdp()
+    mdp.param()
+    mdp.paramAppend()
+    mdp.toFile()
+
+class mdMDP:
+    def __call__(self):
+        self.paramList = []
+        self.paramAllName = ['title','integrator','nsteps','dt','nstxout','nstvout','nstfout','nstenergy','nstlog','nstxoutcompressed', \
+                         'compressedxgrps','continuation','constraint_algorithm','constraints','lincs_iter','lincs_order','cutoffscheme','ns_type','nstlist','rcoulomb', \
+                         'rvdw','coulombtype','pme_order','fourierspacing','tcoupl','tcgrps','tau_t','ref_t','pcoupl','pcoupltype', \
+                         'tau_p','ref_p','compressibility','pbc','DispCorr','gen_vel']
+        self.title = 'title = Molecular dynamics (MD)'
+        self.integrator = 'integrator = md'
+        self.nsteps = 'nsteps = 500000'
+        self.dt = 'dt = 0.002'
+        self.nstxout = 'nstxout = 0' 
+        self.nstvout = 'nstvout = 0'
+        self.nstfout = 'nstfout = 0'
+        self.nstenergy = 'nstenergy = 5000'
+        self.nstlog = 'nstlog = 5000'
+        self.nstxoutcompressed = 'nstxout-compressed = 5000'
+        self.compressedxgrps = 'compressed-x-grps = System'
+        self.continuation = 'continuation = yes' 
+        self.constraint_algorithm = 'constraint_algorithm = lincs' 
+        self.constraints = 'constraints = h-bonds'
+        self.lincs_iter = 'lincs_iter = 1'
+        self.lincs_order = 'lincs_order = 4'
+        self.cutoffscheme = 'cutoff-scheme = Verlet'
+        self.ns_type = 'ns_type = grid'
+        self.nstlist = 'nstlist = 10'
+        self.rcoulomb = 'rcoulomb = 1.0'
+        self.rvdw = 'rvdw = 1.0'
+        self.coulombtype = 'coulombtype = PME'
+        self.pme_order = 'pme_order = 4'
+        self.fourierspacing = 'fourierspacing = 0.16'
+        self.tcoupl = 'tcoupl = V-rescale'
+        self.tcgrps = 'tc-grps = Protein Non-Protein'
+        self.tau_t = 'tau_t = 0.1     0.1'
+        self.ref_t = 'ref_t = 300     300'
+        self.pcoupl = 'pcoupl = Parrinello-Rahman'
+        self.pcoupltype = 'pcoupltype = isotropic'
+        self.tau_p = 'tau_p = 2.0'
+        self.ref_p = 'ref_p = 1.0'
+        self.compressibility = 'compressibility = 4.5e-5'
+        self.pbc = 'pbc = xyz'
+        self.DispCorr = 'DispCorr = EnerPres'
+        self.gen_vel = 'gen_vel = no'
+
+    def param(self):
+        print('Here are parameters of molecular dynamics (MD) step:')
+        for name in self.paramAllName:
+            print(eval('self.'+str(name)))
+        print('\n')
+        print('Please specify the parameter that you would like to change or type n if you do not want to: ')
+        paramName = input()
+        if str(paramName) == str('n'):
+            print('\n')
+        elif str(paramName) in self.paramAllName:
+            print('Specify the new value of this parameter: ')
+            new = input()
+            setattr(self,str(paramName),str(paramName) + ' = ' + str(new))
+            print('\n')
+            self.param()
+        elif str(paramName) == str('nstxout-compressed'):
+            print('Specify the new value of this parameter: ')
+            new = input()
+            self.nstxoutcompressed = 'nstxout-compressed = %s' %(new)
+            print('\n')
+            self.param()
+        elif str(paramName) == str('compressed-x-grps'):
+            print('Specify the new value of this parameter: ')
+            new = input()
+            self.compressedxgrps = 'compressed-x-grps = %s' %(new)
+            print('\n')
+            self.param()
+        elif str(paramName) == str('cutoff-scheme'):
+            print('Specify the new value of this parameter: ')
+            new = input()
+            self.cutoffscheme = 'cutoff-scheme = %s' %(new)
+            print('\n')
+            self.param()
+        elif str(paramName) == str('tc-grps'):
+            print('Specify the new value of this parameter: ')
+            new = input()
+            self.tcgrps = 'tc-grps = %s' %(new)
+            print('\n')
+            self.param()
+        else:
+            print('This parameter does not exist!')
+            print('\n')
+            self.param()
+    
+    def paramAppend(self):        
+        for name in self.paramAllName:
+          self.paramList.append(eval('self.'+str(name)))
+          
         return
         
     def toFile(self):
@@ -86,11 +425,11 @@ class mdpFile(object):
         sys.stdout = sys.__stdout__
 
             
-def MDmdp():
-    mdp = mdpFile()
+def MDMDP():
+    mdp = mdMDP()
     mdp()
-    mdp.numberOfSteps()
     mdp.param()
+    mdp.paramAppend()
     mdp.toFile()
 
 def removeNonProtein():
@@ -113,15 +452,29 @@ def forceField():
     pdbToGmx = subprocess.Popen(['gmx','pdb2gmx','-f','clean.pdb','-o','struct.gro','-water','spce'], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
     stdin_data = pdbToGmx.communicate(input=b'15 \n')[0]
 
-        
 def solv():
     subprocess.run(['gmx','editconf','-f','struct.gro','-o','box.gro','-c','-d','1.0','-bt','cubic'])
     subprocess.run(['gmx','solvate','-cp','box.gro','-cs','spc216.gro','-o','solv.gro','-p','topol.top'])
+    
+class ions:
+    def saltConc(self):
+        print('Default concentration during adding ions step is 0 mol/liter. Would you like to change? y/n: ')
+        choice = input()
+        if str(choice) == str('y'):
+            print('Specify the desired concentration (only the value): ')
+            self.conc = input()
+            return
+        if str(choice) == str('n'):
+            self.conc = '0'
+            return
+        else:   
+            print('Please choose y or n.')
+            self.saltConc()    
 
-def addIons():
-    subprocess.run(['gmx','grompp','-f','ions.mdp','-c','solv.gro','-p','topol.top','-o','ions.tpr'])
-    AddIons = subprocess.Popen(['gmx','genion','-s','ions.tpr','-o','solv_ions.gro','-p','topol.top','-pname','NA','-nname','CL','-neutral'], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdin_data = AddIons.communicate(input=b'13 \n')[0]
+    def addIons(self):
+        subprocess.run(['gmx','grompp','-f','ions.mdp','-c','solv.gro','-p','topol.top','-o','ions.tpr'])
+        AddIons = subprocess.Popen(['gmx','genion','-s','ions.tpr','-o','solv_ions.gro','-p','topol.top','-pname','NA','-nname','CL','-conc',self.conc,'-neutral'], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdin_data = AddIons.communicate(input=b'13 \n')[0]
 
 
 #====================================== EM PART =================================================================
@@ -163,12 +516,18 @@ def mdpMDLauncher():
 #===================================== RUN PART ================================================================
 
 
-def mdRun():
+def runner():
     removeNonProtein()
-    MDmdp()
+    i = ions()
+    i.saltConc()
+    IONSMDP()
+    MINIMMDP()
+    NVTMDP()
+    NPTMDP()
+    MDMDP()
     forceField()
     solv()
-    addIons()
+    i.addIons()
     print('Files are ready.')
     gromppEm()
     print('EM is ready.')
@@ -192,5 +551,5 @@ def mdRun():
 
 
 if __name__ == '__main__': 
-    mdRun()
+    runner()
     
