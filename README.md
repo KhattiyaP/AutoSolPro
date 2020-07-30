@@ -5,19 +5,13 @@
 * [GROMACS](http://www.gromacs.org/) needs to be installed.
 * If you use Windows, you may run by Ubuntu in Windows Subsystem for Linux.
 ### How to Use
-1. Create a directory (no space) and put there all the files:
-    * AutoSolPro.py
-    * ions.mdp
-    * minim.mdp
-    * npt.mdp
-    * nvt.mdp
-    * yourfile.pdb (your .pdb file)
+1. Create a directory (no space) and put there AutoSolPro.py and yourfile.pdb (your protein file).
     
 2. Change the directory in Command Prompt to your folder and type
 ```
 python3 AutoSolPro.py yourfile.pdb
 ```
-You will be asked about the number of steps of the MD. Then, all the processes will be run fully automatically.
+You will be asked about the parameters of processes. And after that, it will run fully automatically.
 
 ## Author
 **[Khattiya Pongsirijinda](mailto:Khattiya.Pongsirijinda@skoltech.ru)** - Skolkovo Institute of Science and Technology
