@@ -11,7 +11,7 @@
 ```
 python3 AutoSolPro.py --file 'yourfile.pdb'
 ```
-and if you would like to change the parameters from the default, they can use the command, for example,
+and if you would like to change the parameters from the default, you can use the command, for example,
 ```
 python3 AutoSolPro.py --file 'yourfile.pdb' --nsteps_md '5000'
 ```
