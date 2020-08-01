@@ -9,9 +9,16 @@
     
 2. Change the directory in Command Prompt to your folder and type
 ```
-python3 AutoSolPro.py yourfile.pdb
+python3 AutoSolPro.py --file 'yourfile.pdb'
 ```
-You will be asked about the parameters of processes. And after that, it will run fully automatically.
+and if you would like to change the parameters from the default, they can use the command, for example,
+```
+python3 AutoSolPro.py --file 'yourfile.pdb' --nsteps_md '5000'
+```
+You can find out more about the parameters by the command,
+```
+python3 AutoSolPro.py --help'
+```
 
 ## Author
 **[Khattiya Pongsirijinda](mailto:Khattiya.Pongsirijinda@skoltech.ru)** - Skolkovo Institute of Science and Technology
