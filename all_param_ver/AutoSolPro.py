@@ -88,7 +88,7 @@ class paramInput:
         parser.add_argument('--nstlist_nvt',help='20 fs, largely irrelevant with Verlet',default='10')
         parser.add_argument('--rcoulomb_nvt',help='short-range electrostatic cutoff (in nm)',default='1.0')
         parser.add_argument('--rvdw_nvt',help='short-range van der Waals cutoff (in nm)',default='1.0')
-        parser.add_argument('--DispCorr_nvt',help='account for cut-off vdW scheme',default='EnerPress')
+        parser.add_argument('--DispCorr_nvt',help='account for cut-off vdW scheme',default='EnerPres')
         parser.add_argument('--coulombtype_nvt',help='Particle Mesh Ewald for long-range electrostatics',default='PME')
         parser.add_argument('--pme_order_nvt',help='cubic interpolation',default='4')
         parser.add_argument('--fourierspacing_nvt',help='grid spacing for FFT',default='0.16')
@@ -122,7 +122,7 @@ class paramInput:
         parser.add_argument('--nstlist_npt',help='20 fs, largely irrelevant with Verlet',default='10')
         parser.add_argument('--rcoulomb_npt',help='short-range electrostatic cutoff (in nm)',default='1.0')
         parser.add_argument('--rvdw_npt',help='short-range van der Waals cutoff (in nm)',default='1.0')
-        parser.add_argument('--DispCorr_npt',help='account for cut-off vdW scheme',default='EnerPress')
+        parser.add_argument('--DispCorr_npt',help='account for cut-off vdW scheme',default='EnerPres')
         parser.add_argument('--coulombtype_npt',help='Particle Mesh Ewald for long-range electrostatics',default='PME')
         parser.add_argument('--pme_order_npt',help='cubic interpolation',default='4')
         parser.add_argument('--fourierspacing_npt',help='grid spacing for FFT',default='0.16')
@@ -174,7 +174,7 @@ class paramInput:
         parser.add_argument('--ref_p_md',help='reference pressure, in bar',default='1.0')
         parser.add_argument('--compressibility_md',help='isothermal compressibility of water, bar^-1',default='4.5e-5')
         parser.add_argument('--pbc_md',help='3-D PBC',default='xyz')
-        parser.add_argument('--DispCorr_md',help='account for cut-off vdW scheme',default='EnerPress')
+        parser.add_argument('--DispCorr_md',help='account for cut-off vdW scheme',default='EnerPres')
         parser.add_argument('--gen_vel_md',help='Velocity generation is off',default='no')
         
         #forceField
